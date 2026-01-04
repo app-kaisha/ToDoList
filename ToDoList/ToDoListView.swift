@@ -13,10 +13,12 @@ struct ToDoListView: View {
         NavigationStack {
             VStack {
                 NavigationLink {
-                    Text("Welcome to the New View")
+                    DetailView()
                 } label: {
+                    Image(systemName: "eye")
                     Text("Show the New View!")
-                }  
+                }
+                .buttonStyle(.borderedProminent)
             }
             .padding()
         }
