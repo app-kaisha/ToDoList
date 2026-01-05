@@ -9,18 +9,28 @@
 import SwiftUI
 
 struct ToDoListView: View {
+    var toDos = ["Learn Swift",
+                 "Change the World",
+                 "Bring the Awesome",
+                 "Tak A Break",]
+    
     var body: some View {
         NavigationStack {
-            VStack {
-                NavigationLink {
-                    DetailView()
-                } label: {
-                    Image(systemName: "eye")
-                    Text("Show the New View!")
+            List {
+                ForEach(toDos, id: \.self) { todo in
+                    NavigationLink {
+                        DetailView(passedValue: todo)
+                    } label: {
+                        Text(todo)
+                    }
+
+                    
                 }
-                .buttonStyle(.borderedProminent)
+
             }
-            .padding()
+            .navigationTitle("To Do List")
+            .navigationBarTitleDisplayMode(.automatic)
+            .listStyle(.plain)
         }
 
     }
