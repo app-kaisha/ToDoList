@@ -7,12 +7,19 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct ToDoListApp: App {
     var body: some Scene {
         WindowGroup {
             ToDoListView()
+                .modelContainer(for: ToDo.self)
         }
+    }
+    
+    // get path of swiftData in simulator
+    init() {
+        print(URL.applicationSupportDirectory.path(percentEncoded: false))
     }
 }

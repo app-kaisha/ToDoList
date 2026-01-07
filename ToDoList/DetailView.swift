@@ -7,10 +7,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct DetailView: View {
     
-    @State var toDo: String
+    @Environment(\.modelContext) var modelContext
+    
+    @State var toDo: ToDo
+    @State private var item = ""
     @State private var reminderIsOn = false
     @State private var isCompleted = false
     @State private var notes = ""
@@ -21,7 +25,7 @@ struct DetailView: View {
     var body: some View {
         
         List {
-            TextField("Enter To Do here", text: $toDo)
+            TextField("Enter To Do here", text: $item)
                 .font(.title)
                 .textFieldStyle(.roundedBorder)
                 .padding(.vertical)
@@ -47,6 +51,13 @@ struct DetailView: View {
         }
         .listStyle(.plain)
         .navigationBarBackButtonHidden()
+        .onAppear {
+            item = toDo.item
+            reminderIsOn = toDo.reminderIsOn
+            dueDate = toDo.dueDate
+            notes = toDo.notes
+            isCompleted = toDo.isCompleted
+        }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button("Cancel") {
@@ -55,7 +66,23 @@ struct DetailView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Save") {
-                    // TODO: add save function
+                    // move data from local vars to toDoObject
+                    toDo.item = item
+                    toDo.reminderIsOn = reminderIsOn
+                    toDo.dueDate = dueDate
+                    toDo.notes = notes
+                    toDo.isCompleted = isCompleted
+                    // save into swift data/overwrite existing
+                    modelContext.insert(toDo)
+                    
+                    // just to push immediately to watch db get populated in dblite
+                    guard let _ = try? modelContext.save() else {
+                        print("😡 ERROR: Save on DetailView did not work!")
+                        return
+                    }
+                    
+                    // return to previous view
+                    dismiss()
                 }
             }
         }
@@ -64,6 +91,7 @@ struct DetailView: View {
 
 #Preview {
     NavigationStack {
-        DetailView(toDo: "")
+        DetailView(toDo: ToDo())
+            .modelContainer(for: ToDo.self, inMemory: true)
     }
 }
