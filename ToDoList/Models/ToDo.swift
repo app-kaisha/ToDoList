@@ -40,4 +40,15 @@ extension ToDo {
         container.mainContext.insert(ToDo(item: "Prepare iPhone", reminderIsOn: true, dueDate: .now + 60*60*12, notes: "Refresh old phone", isCompleted: false))
         return container
     }
+    
+    
+    func purgeData() {
+        let path = URL.documentsDirectory.appending(component: "toDos")
+        let data = try? JSONEncoder().encode("")
+        do {
+            try data?.write(to: path)
+        } catch {
+            print("😡 ERROR: Could not save data \(error.localizedDescription)")
+        }
+    }
 }
